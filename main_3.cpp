@@ -32,8 +32,8 @@ int main(void)
   setBaudrate(num,B9600);
   int g_status = 1; 
   while(g_status)
-  { g_bytes_read = 12;
-    //g_bytes_read = readUART(num, read_buffer ,100);
+  { 
+    g_bytes_read = readUART(num, read_buffer ,100);
     if (g_bytes_read > 0)
     {
       if (read_buffer[0] == 'x') 
@@ -66,7 +66,7 @@ int main(void)
               getNumString = "";
             }
 
-            for (int temp_count = 5; temp_count <= 15; temp_count++)
+            for (int temp_count = getNum[0]; temp_count <= getNum[1]; temp_count++)
             {
             setLED_4bits(num_LED,temp_count);
             printf("Exported %d \n",temp_count);
