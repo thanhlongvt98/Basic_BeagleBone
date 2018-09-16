@@ -6,10 +6,10 @@
 #include <string>
 #include <time.h>
 
-#include "pwm/pwm.h"
-#include "adc/adc.h"
-#include "uart/uart.h"
-#include "gpio/SimpleGPIO.h"
+#include "../lib/pwm/pwm.h"
+#include "../lib/adc/adc.h"
+#include "../lib/uart/uart.h"
+#include "../lib/gpio/SimpleGPIO.h"
 
 
 int main(void)
