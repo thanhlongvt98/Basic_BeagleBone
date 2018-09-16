@@ -9,12 +9,24 @@
 using namespace std;
 
 /****************************************************************
- * pwm
+ *  Export pin.
  ****************************************************************/
 int enablePWMpin(int pwm_module, char pwm_part);
+
+/****************************************************************
+ *  Unexport pin.
+ ****************************************************************/
 int disablePWMpin(int pwm_module, char pwm_part);
+
+/****************************************************************
+ *  set PWM period and duty for chosen pwm pin.
+ ****************************************************************/
 void setPWM(int pwm_module,char pwm_part, long int period, long int duty);
+
+/****************************************************************
+ *  Print infomation about pwm modules and their pins.
+ ****************************************************************/
 void info(void);
 
 
-#endif /* SIMPLEGPIO_H_ */
+#endif /* PWM_H_ */

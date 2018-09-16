@@ -14,10 +14,17 @@
 
 #define ADC_HARDWARE_PATH "/sys/devices/platform/bone_capemgr/slots"
 #define ADC_READ_PATH "/sys/bus/iio/devices/iio:device0/"
+
 using namespace std;
 
+/*
+    Add BBB-ADC Overlay to slots file
+*/
 int enableADCHardware(void);
-float ADCRead(int ADC_num);
 
+/*
+    Return voltage from chosen ADC
+*/
+float ADCRead(int ADC_num);
 
 #endif /* ADC_H_ */

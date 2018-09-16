@@ -77,14 +77,6 @@ void info(void)
     printf("\n 2A -> P9.14 \t 2B -> P9.16 \n");
     printf("\n 4A -> P8.19 \t 4B -> P8.13 \n");
 }
-/*
-int main()
-{
-    enablePWMpin(4,'B');
-    setPWM(4,'B',1000000000,500000000);
-}
-*/
-
 
 
 //chip2 A P9.14 - EHRPWM1A

@@ -13,7 +13,15 @@
 
 int main(void)
 {
-  int num_LED[4]={72,74,76,78};
+  int gi_gpioLED[4]={72,74,76,78};
+  int gi_getNum[2];
+  u_int8_t gi_getNumIdx = 2;
+  int gi_numPort = 1, gi_numFlag;
+  char gc_readBuffer[100];
+  int gi_bytesRead = 0;
+  int gi_status = 1; 
+
+  // Init GPIO.
   gpio_export(72);
   gpio_export(74);
   gpio_export(76);
@@ -22,56 +30,54 @@ int main(void)
   gpio_set_dir(74,OUTPUT_PIN);
   gpio_set_dir(76,OUTPUT_PIN);
   gpio_set_dir(78,OUTPUT_PIN);
-  int getNum[2];
-  u_int8_t getNumIdx = 2;
-  double tempGetNumCount[4];
-  int num=1, num_flag;
-  char read_buffer[100];
-  int g_bytes_read = 0;
-  openSerial(num);
-  setBaudrate(num,B9600);
-  int g_status = 1; 
-  while(g_status)
+
+  // Init serial.
+  openSerial(gi_numPort);
+  setBaudrate(gi_numPort,B9600);
+
+  while(gi_status) // gi_status = 0 when recieve 'x'.
   { 
-    g_bytes_read = readUART(num, read_buffer ,100);
-    if (g_bytes_read > 0)
+    gi_bytesRead = readUART(gi_numPort, gc_readBuffer ,100);
+    if (gi_bytesRead > 0) // Do nothing if recieve nothing.
     {
-      if (read_buffer[0] == 'x') 
+      if (gc_readBuffer[0] == 'x') // Close pwm pin and program if 'x' is the first byte.
       {
         printf("\n ------------- Close port ----------- \n");
-        closeUART(num);
-        g_status=0;
+        closeUART(gi_numPort);
+        gi_status=0;
         printf("\n ------------- Close port -----------\n");
       }
       else
 	    {
-        getNumIdx = 0;
-        num_flag = 0;
-        string getNumString = "";
+        gi_getNumIdx = 0;
+        gi_numFlag = 0;
+        string gstr_getNum = "";
         string::size_type sz;
-        for (int l_count = 0; l_count < g_bytes_read ; l_count++)
+        for (int l_count = 0; l_count < gi_bytesRead ; l_count++)
         {
-          if ((read_buffer[l_count] >= '0') && (read_buffer[l_count] <= '9'))
+          // Collect numbers.
+          if ((gc_readBuffer[l_count] >= '0') && (gc_readBuffer[l_count] <= '9'))
           {
-            getNumString += read_buffer[l_count];
-            num_flag = 1;
+            gstr_getNum += gc_readBuffer[l_count];
+            gi_numFlag = 1;
           }
           else
           {
-            if (num_flag == 1)
+            if (gi_numFlag == 1)
             {
-              getNum[getNumIdx] = std::stoi(getNumString,&sz,10);
-              getNumIdx = (getNumIdx + 1 ) % 2;
-              num_flag = 0;
-              getNumString = "";
+              gi_getNum[gi_getNumIdx] = std::stoi(gstr_getNum,&sz,10);
+              gi_getNumIdx = (gi_getNumIdx + 1 ) % 2;
+              gi_numFlag = 0;
+              gstr_getNum = "";
             }
-
-            for (int temp_count = getNum[0]; temp_count <= getNum[1]; temp_count++)
+            // Export numbers from A to B through 4 pins.
+            for (int gi_tempCount = gi_getNum[0]; gi_tempCount <= gi_getNum[1]; gi_tempCount++)
             {
-            setLED_4bits(num_LED,temp_count);
-            printf("Exported %d \n",temp_count);
-            clock_t time_now = clock();
-            while(clock() < time_now + 2000000);
+            setLED_4bits(gi_gpioLED,gi_tempCount);
+            // Print to check.
+            printf("Exported %d \n",gi_tempCount);
+            clock_t g_timeStart = clock();
+            while(clock() < g_timeStart + 2000000);
             }
 
           }

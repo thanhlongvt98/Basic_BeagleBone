@@ -213,6 +213,10 @@ int gpio_fd_close(int fd)
 	return close(fd);
 }
 
+/****************************************************************
+ * setLED_4bits
+ ****************************************************************/
+
 void setLED_4bits(int* num, int value)
 {
 	int count;

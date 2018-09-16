@@ -26,12 +26,3 @@ float ADCRead(int ADC_num)
     adc_fs.close();
     return 1.8*n/4096;
 }
-/*
-int main()
-{
-    while(1)
-    {
-        printf("%f \n",ADCRead(0));
-    }
-}
-*/

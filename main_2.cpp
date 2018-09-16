@@ -1,8 +1,6 @@
+
 #include <stdio.h>
 #include <unistd.h>
-//#include <errno.h>
-//#include <iostream>
-//#include <fstream>
 #include <termios.h>
 #include <stdlib.h>
 #include <string>
@@ -16,54 +14,61 @@
 
 int main(void)
 {
-  int getNum;
-  double tempGetNumCount;
-  int num=1, num_flag;
-  char read_buffer[100];
-  int g_bytes_read = 0;
-  openSerial(num);
-  setBaudrate(num,B9600);
-  int g_status = 1;
-  while(g_status)
-  { 
-    g_bytes_read = readUART(num, read_buffer ,100);
-    if (g_bytes_read > 0)
+  int gi_getNum;
+  int gi_numPort = 1, gi_numFlag;
+  char gc_readBuffer[100];
+  int gi_bytesRead = 0;
+  int gi_status = 1;
+
+  // Init serial.
+  openSerial(gi_numPort);
+  setBaudrate(gi_numPort,B9600);
+
+  while(gi_status) // gi_status = 0 when recieve 'x'.
+  {
+    gi_bytesRead = readUART(gi_numPort, gc_readBuffer ,100);
+    if (gi_bytesRead > 0) // Do nothing if recieve nothing.
     {
-      if (read_buffer[0] == 'x')
+      if (gc_readBuffer[0] == 'x') // Close port
       {
         printf("\n ------------- Close port ----------- \n");
-        closeUART(num);
-        g_status=0;
+        closeUART(gi_numPort);
+        gi_status=0;
         printf("\n ------------- Close port -----------\n");
       }
-      else
+      else // Do things.
 	    {
-        num_flag = 0;
+        gi_numFlag = 0;
         string getNumString = "";
         string::size_type sz;
-        for (int l_count = 0; l_count < g_bytes_read ; l_count++)
+        // Collect number.
+        for (int l_count = 0; l_count < gi_bytesRead ; l_count++)
         {
-          if ((read_buffer[l_count] >= '0') && (read_buffer[l_count] <= '9'))
+          if ((gc_readBuffer[l_count] >= '0') && (gc_readBuffer[l_count] <= '9'))
           {
-            getNumString += read_buffer[l_count];
-            num_flag = 1;
+            getNumString += gc_readBuffer[l_count];
+            gi_numFlag = 1;
           }
           else
           {
-            if (num_flag == 1)
+            if (gi_numFlag == 1)
             {
-              getNum = std::stoi(getNumString,&sz,10);
-              num_flag = 0;
+              gi_getNum = std::stoi(getNumString,&sz,10);
+              gi_numFlag = 0;
             }
-            
+
           }
         }
+
+
         int times = 100;
         clock_t time_now;
+
+        // Delay.
         while(times)
         {
             time_now = clock();
-            printf("%f \n",ADCRead(getNum));
+            printf("%f \n",ADCRead(gi_getNum));
             times--;
             while(100-(clock() - time_now)/1000);
         }

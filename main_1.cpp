@@ -1,78 +1,86 @@
+
 #include <stdio.h>
 #include <unistd.h>
-//#include <errno.h>
-//#include <iostream>
-//#include <fstream>
 #include <termios.h>
 #include <stdlib.h>
 #include <string>
-
 
 #include "pwm/pwm.h"
 #include "adc/adc.h"
 #include "uart/uart.h"
 #include "gpio/SimpleGPIO.h"
 
+#define BYTESNEED 4
 
 int main(void)
 {
-  enablePWMpin(2,'A');
-  enablePWMpin(4,'A');
-  int getNum[4];
-  u_int8_t getNumIdx = 0;
-  double tempGetNumCount[4];
-  int num=1, num_flag;
-  char read_buffer[100];
-  int g_bytes_read = 0;
-  openSerial(num);
-  setBaudrate(num,B9600);
-  int g_status = 1;
-  while(g_status)
-  { 
+  int gi_getNum[BYTESNEED];
+  u_int8_t gui8_getNumIdx = 0;
+  int gi_numPort = 1;
+  int gi_numFlag;
+  char gc_readBuffer[100];
+  int gi_bytesRead = 0;
+  int gi_status = 1;
+
+  // Init PWM
+  enablePWMpin(2, 'A');
+  enablePWMpin(4, 'A');
+
+  // Init serial port
+  openSerial(gi_numPort);
+  setBaudrate(gi_numPort, B9600);
+
+  while (gi_status) // gi_status = 0 when recieve 'x'.
+  {
+
     printf("Please type : \"FIRST_PERIOD FIRST_DUTY SECOND_PERIOD SECOND_DUTY \" \n");
     printf("            : \"P1 D1 P2 D2 \" \n");
     printf("By UART1 P9.24 (TX) P9.26 (RX) \n");
-    g_bytes_read = readUART(num, read_buffer ,100);
-    if (g_bytes_read > 0)
+    gi_bytesRead = readUART(gi_numPort, gc_readBuffer, 100);
+    if (gi_bytesRead > 0) // Do nothing if recieve nothing.
     {
-      if (read_buffer[0] == 'x') 
+      if (gc_readBuffer[0] == 'x') // Close pwm pin and program if 'x' is the first byte.
       {
         printf("\n ------------- Close port ----------- \n");
-        closeUART(num);
-        g_status=0;
+        closeUART(gi_numPort);
+        gi_status = 0;
         printf("\n ------------- Close port -----------\n");
-        disablePWMpin(2,'A');
-        disablePWMpin(4,'A');
+        disablePWMpin(2, 'A');
+        disablePWMpin(4, 'A');
       }
-      else
-	    {
-        getNumIdx = 0;
-        num_flag = 0;
+      else // Do things.
+      {
+        gui8_getNumIdx = 0;
+        gi_numFlag = 0;
         string getNumString = "";
         string::size_type sz;
-        for (int l_count = 0; l_count < g_bytes_read ; l_count++)
+        // Get numbers from receive bytes.
+        for (int l_count = 0; l_count < gi_bytesRead; l_count++)
         {
-          if ((read_buffer[l_count] >= '0') && (read_buffer[l_count] <= '9'))
+          // Collect numbers.
+          if ((gc_readBuffer[l_count] >= '0') && (gc_readBuffer[l_count] <= '9'))
           {
-            getNumString += read_buffer[l_count];
-            num_flag = 1;
+            getNumString += gc_readBuffer[l_count];
+            gi_numFlag = 1;
           }
           else
           {
-            if (num_flag == 1)
+            if (gi_numFlag == 1)
             {
-              getNum[getNumIdx] = std::stoi(getNumString,&sz,10);
-              getNumIdx = (getNumIdx + 1 ) % 4;
-              num_flag = 0;
+              gi_getNum[gui8_getNumIdx] = std::stoi(getNumString, &sz, 10);
+              gui8_getNumIdx = (gui8_getNumIdx + 1) % BYTESNEED;
+              gi_numFlag = 0;
               getNumString = "";
             }
-            
           }
         }
-        printf("P1 = %i \t D1 = %i \t P2 = %i \t D2 = %i \n \n \n \n",getNum[0],getNum[1],getNum[2],getNum[3] );
-        setPWM(2,'A',getNum[0],getNum[1]);
-        setPWM(4,'A',getNum[2],getNum[3]);
-	    }
+        // Print to check.
+        printf("P1 = %i \t D1 = %i \t P2 = %i \t D2 = %i \n \n \n \n",
+               gi_getNum[0], gi_getNum[1], gi_getNum[2], gi_getNum[3]);
+        // Set PWM
+        setPWM(2, 'A', gi_getNum[0], gi_getNum[1]);
+        setPWM(4, 'A', gi_getNum[2], gi_getNum[3]);
+      }
     }
   }
 }
