@@ -53,7 +53,7 @@ int main(void)
     gi_bytesRead = readUART(gi_numPort, gc_readBuffer, MAXBUFFERSIZE);
     if (gi_bytesRead > 0) // Do nothing if recieve nothing.
     {
-      if (gc_readBuffer[0] == MAXBUFFERSIZE) // Close pwm pin and program if 'x' is the first byte.
+      if (gc_readBuffer[0] == EXITCHAR) // Close pwm pin and program if 'x' is the first byte.
       {
         printf("\n ------------- Close port ----------- \n");
         closeUART(gi_numPort);
