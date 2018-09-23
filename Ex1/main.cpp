@@ -1,4 +1,11 @@
-
+/**
+ * @Brief Discription: This file is a program to get two periods 
+ * and two duty circle(%) from UART and blink two LEDs.
+ * 
+ * @file main.cpp
+ * @Author: Silent - thanhlongvt98@gmail.com
+ * @date 2018-09-23
+ */
 #include <stdio.h>
 #include <unistd.h>
 #include <termios.h>
@@ -10,15 +17,22 @@
 #include "../lib/uart/uart.h"
 #include "../lib/gpio/SimpleGPIO.h"
 
-#define BYTESNEED 4
+#define BYTESNEED 1
+#define MAXBUFFERSIZE 100
+#define EXITCHAR 'x'
 
+/**
+ * @Brief Discription: main function.
+ * 
+ * @return int 
+ */
 int main(void)
 {
   int gi_getNum[BYTESNEED];
   u_int8_t gui8_getNumIdx = 0;
   int gi_numPort = 1;
   int gi_numFlag;
-  char gc_readBuffer[100];
+  char gc_readBuffer[MAXBUFFERSIZE];
   int gi_bytesRead = 0;
   int gi_status = 1;
 
@@ -36,10 +50,10 @@ int main(void)
     printf("Please type : \"FIRST_PERIOD FIRST_DUTY SECOND_PERIOD SECOND_DUTY \" \n");
     printf("            : \"P1 D1 P2 D2 \" \n");
     printf("By UART1 P9.24 (TX) P9.26 (RX) \n");
-    gi_bytesRead = readUART(gi_numPort, gc_readBuffer, 100);
+    gi_bytesRead = readUART(gi_numPort, gc_readBuffer, MAXBUFFERSIZE);
     if (gi_bytesRead > 0) // Do nothing if recieve nothing.
     {
-      if (gc_readBuffer[0] == 'x') // Close pwm pin and program if 'x' is the first byte.
+      if (gc_readBuffer[0] == MAXBUFFERSIZE) // Close pwm pin and program if 'x' is the first byte.
       {
         printf("\n ------------- Close port ----------- \n");
         closeUART(gi_numPort);

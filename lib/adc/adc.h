@@ -1,5 +1,3 @@
-
-
 #ifndef ADC_H_
 #define ADC_H_
  /*
@@ -21,10 +19,12 @@ using namespace std;
     Add BBB-ADC Overlay to slots file
 */
 int enableADCHardware(void);
-
-/*
-    Return voltage from chosen ADC
-*/
+/**
+ * @Brief Discription: read value from ADCx.
+ * 
+ * @param ADC_num : idex x of ADC.
+ * @return float : value of ADCx
+ */
 float ADCRead(int ADC_num);
 
 #endif /* ADC_H_ */

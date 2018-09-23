@@ -1,5 +1,10 @@
-
-
+/**
+ * @Brief Discription: library for ADC BeagleBone.
+ * 
+ * @file adc.cpp
+ * @Author: Silent - thanhlongvt98@gmail.com
+ * @date 2018-09-23
+ */
 #include <stdio.h>
 #include <string>
 #include <iostream>

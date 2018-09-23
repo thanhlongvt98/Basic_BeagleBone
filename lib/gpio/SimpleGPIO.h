@@ -23,6 +23,7 @@ enum PIN_VALUE{
 /****************************************************************
  *
  ****************************************************************/
+
 int gpio_export(unsigned int gpio);
 int gpio_unexport(unsigned int gpio);
 int gpio_set_dir(unsigned int gpio, PIN_DIRECTION out_flag);

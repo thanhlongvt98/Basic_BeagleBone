@@ -1,4 +1,11 @@
-
+/**
+ * @Brief Discription: program to read the voltage value from one of two ADC pins, 
+ * user uses UART to select which ADC is used and get it's data display through Terminal.
+ * 
+ * @file main.cpp
+ * @Author: Silent - thanhlongvt98@gmail.com
+ * @date 2018-09-23
+ */
 #include <stdio.h>
 #include <unistd.h>
 #include <termios.h>
@@ -11,12 +18,21 @@
 #include "../lib/uart/uart.h"
 #include "../lib/gpio/SimpleGPIO.h"
 
+#define BYTESNEED 4
+#define MAXBUFFERSIZE 100
+#define EXITCHAR 'x'
+
+/**
+ * @Brief Discription: main function.
+ * 
+ * @return int 
+ */
 
 int main(void)
 {
   int gi_getNum;
   int gi_numPort = 1, gi_numFlag;
-  char gc_readBuffer[100];
+  char gc_readBuffer[MAXBUFFERSIZE];
   int gi_bytesRead = 0;
   int gi_status = 1;
 
@@ -26,10 +42,10 @@ int main(void)
 
   while(gi_status) // gi_status = 0 when recieve 'x'.
   {
-    gi_bytesRead = readUART(gi_numPort, gc_readBuffer ,100);
+    gi_bytesRead = readUART(gi_numPort, gc_readBuffer ,MAXBUFFERSIZE);
     if (gi_bytesRead > 0) // Do nothing if recieve nothing.
     {
-      if (gc_readBuffer[0] == 'x') // Close port
+      if (gc_readBuffer[0] == EXITCHAR) // Close port
       {
         printf("\n ------------- Close port ----------- \n");
         closeUART(gi_numPort);
